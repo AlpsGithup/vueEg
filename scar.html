@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #root {
+            width: 600px;
+            margin: 20px auto;
+        }
+        table{
+            border-spacing: 0;
+        }
+        table th{
+            color:red;
+            background-color: aqua;
+            text-align: left;
+        }
+        tr{
+            padding-top:20px;
+        }
+        table td{
+            line-height:33px;
+        }
+        td:nth-of-type(4)>button{
+            width:20px;
+            height:20px;
+            text-align: center;
+            line-height:20px;
+        }
+        td:nth-of-type(5)>button{
+            width:100%;
+            padding:3px 5px;
+        }
+        .tdBg{
+            background-color:#ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <table border="0" width="400px">
+            <tr>
+                <th></th>
+                <th>商品名称</th>
+                <th>商品单价</th>
+                <th>商品数量</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(item,index) in list" :class="{'tdBg':index%2==1}">
+                <td>{{index+1}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td>
+                    <button @click="minus(index)">-</button>
+                    <span>{{item.num}}</span>  
+                    <button @click="add(index)">+</button>  
+                </td>
+                <td>
+                    <button @click="del(index)">移除</button>
+                </td>
+            </tr>
+        </table>
+        <p>总价：￥{{sum}}</p>
+    </div>
+    <script>
+        new Vue({
+            el: "#root",
+            data: {
+                list: [
+                    {
+                        name: 'iPhone X',
+                        price: 7999,
+                        num:1,
+                    },
+                    {
+                        name: '荣耀 10',
+                        price: 2399,
+                        num:1,
+                    },
+                    {
+                        name: '华为 P20',
+                        price: 3399,
+                        num:1,
+                    },
+                    {
+                        name: '小米 8',
+                        price: 3999,
+                        num:1,
+                    },
+                ],
+                sum:17796,
+            },
+            methods:{
+                minus:function(index){
+                    
+                    if(this.list[index].num<=1){
+                        this.list[index].num=1;
+                    }
+                    else{
+                        this.list[index].num--;
+                        this.sum-=this.list[index].price;
+                    }
+                },
+                add:function(index){
+                    this.list[index].num++;
+                    this.sum+=this.list[index].price;
+                },
+                del:function(index){
+                    this.sum-=this.list[index].price*this.list[index].num;
+                    this.list.splice(index,1);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

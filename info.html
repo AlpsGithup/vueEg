@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing: border-box;
+        }
+        #root{
+            width:600px;
+            margin:10px auto;
+        }
+        fieldset{
+            padding:20px;
+            border-color:aquamarine;
+        }
+        input,select{
+            margin-top:20px;
+            height:25px;
+        }
+        button{
+            background-color: lightskyblue;
+            color:#fff;
+            border:none;
+            padding:5px 10px;
+            border-radius: 5px;
+            margin-top:10px;
+        }
+        table{
+            margin-top:20px;
+            width:100%;
+            border-spacing: 0;
+            border:1px solid aquamarine;
+        }
+        table th{
+            background-color: lightskyblue;
+        }
+        table td{
+            line-height:35px;
+            text-align: center;
+        }
+        td>button{
+            margin-top:-3px;
+
+        }
+        .bgColor{
+            background-color: #ccc;
+        }
+        .tishi{
+            color:red;
+            font-size:14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <fieldset>
+            <legend>学生信息录入系统</legend>
+            <label for="name">姓名：
+                <input id="name" type="text" placeholder="请输入姓名" v-model="info.name">
+                <span class="tishi" v-show="nameFlag">4到16位（字母、数字、下划线）</span>
+                <br>
+                <label for="age">年龄：
+                    <input id="age" type="text" placeholder="0" v-model="info.age"><br>
+                <label for="sex">性别：
+                    <select name="sex" id="sex" v-model="info.sex">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select><br>
+                <label for="tel">手机：
+                    <input id="tel" type="text" placeholder="请输入手机号" v-model="info.tel">
+                    <span class="tishi" v-show="telFlag">手机号码格式不正确</span>
+                    <br>
+                <button v-if="flag==-1" @click="addUser">创建新用户</button>
+                <button v-else="flag!=-1" @click="doModifyUser()">修改</button>
+        </fieldset>
+        <table>
+            <tr>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>性别</th>
+                <th>手机</th>
+                <th>删除</th>
+            </tr>
+            <tr v-for="(item,index) in list" :class="{'bgColor':index%2==1}">
+                <td>{{item.name}}</td>
+                <td>{{item.age}}</td>
+                <td>{{item.sex}}</td>
+                <td>{{item.tel}}</td>
+                <td>
+                    <button @click="removeUser(index)">删除</button>
+                    <button @click="modifyUser(index)">修改</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        new Vue({
+            el: '#root',
+            data: {
+                flag:-1,
+                nameFlag:false,
+                telFlag:false,
+                regName:/^\w{4,16}$/,
+                regTel:/^1[3578]\d{9}$/,
+                info: {
+                    name: "",
+                    age: 0,
+                    sex: "",
+                    tel: "",
+                },
+                list: [
+                    // {
+                    //     name: "",
+                    //     age: 0,
+                    //     sex: "",
+                    //     tel: "",
+                    // },
+                ]
+            },
+            methods: {
+                addUser: function () {
+                    // var regName = /^\w{4,16}$/;
+                    // var regTel = /^1[3578]\d{9}$/;
+                   if(!this.regName.test(this.info.name)){
+                        this.nameFlag=true;
+                        this.telFlag=false;
+                    }
+                    else if(!this.regTel.test(this.info.tel)){
+                        this.nameFlag=false;
+                        this.telFlag=true;
+                    }
+                    else if (this.regName.test(this.info.name) && (this.regTel.test(this.info.tel))&&this.info.age>0) {
+                        this.list.push(this.info);
+                        this.info = {
+                            name: "",
+                            age: 0,
+                            sex: "",
+                            tel: ""
+                        };
+                        this.nameFlag=false;
+                        this.telFlag=false;
+                    }
+
+                },
+                removeUser: function (index) {
+                    this.list.splice(index, 1);
+                },
+                modifyUser: function (index) {
+                    this.flag=index;
+                    this.temp = this.list[index];
+                    this.info = this.list[index];
+                    this.list[index]={
+                        name:this.temp.name,
+                        age:this.temp.age,
+                        sex:this.temp.sex,
+                        tel:this.temp.tel
+                    };
+                },
+                doModifyUser:function(){
+                    if(!this.regName.test(this.info.name)){
+                        this.nameFlag=true;
+                        this.telFlag=false;
+                    }
+                    else if(!this.regTel.test(this.info.tel)){
+                        this.nameFlag=false;
+                        this.telFlag=true;
+                    }
+                    else if (this.regName.test(this.info.name) && (this.regTel.test(this.info.tel))&&this.info.age>0) {
+                        this.list[this.flag]={
+                        name:this.info.name,
+                        age:this.info.age,
+                        sex:this.info.sex,
+                        tel:this.info.tel
+                    };
+                    this.info = {
+                            name: '',
+                            age: 0,
+                            sex: '',
+                            tel:''
+                        }
+                        this.nameFlag=false;
+                        this.telFlag=false;
+                        this.flag=-1;
+                        };
+                   
+                   
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

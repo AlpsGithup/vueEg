@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            list-style: none;
+        }
+        #root{
+            margin:0 auto;
+            width:400px;
+            height:400px;
+            background-color:#ccc;
+            padding:20px;
+            box-sizing: border-box;
+        }
+        .del{
+            text-decoration: line-through;
+            color:#aaa;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <h2>任务列表</h2>
+        <p>任务总数：{{list.length}};还有：{{choose()}}未完成;【<span style="color:aquamarine" @click="finish()">完成</span>】</p>
+        <ul>
+            <li v-for="(item,index) in list">
+                <input type="checkbox" v-model="item.check" @click="checkChange(index)">
+                <span v-show="!item.edit" @click.stop="editChange(index)" :class="{'del':item.check}">{{item.name}}</span>
+                <input v-show="item.edit" type="text" v-model="item.name" @blur="editChange(index)" :autofocus="item.edit">
+            </li>
+        </ul>
+        <input type="text" v-model="inputValue">
+        <button @click="addList">添加</button>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#root',
+            data: {
+                // num:list.length,
+                no: 0,
+                text: '完成',
+                flag: true,
+                inputValue: '',
+                list: [
+                    {
+                        name: '设计', check: false, edit: false,
+                    },
+                    {
+                        name: '设计', check: false, edit: false,
+                    },
+                    {
+                        name: '设计', check: false, edit: false,
+                    },
+                    {
+                        name: '设计', check: false, edit: false,
+                    },
+                ]
+            },
+            methods: {
+                addList: function () {
+                    this.list.push({ name: this.inputValue, check: false });
+                    this.inputValue = "";
+                },
+                choose: function () {
+                    var count = 0;
+                    this.list.forEach(function (item) {
+                        if (!item.check) {
+                            count++;
+                        }
+                    });
+                    return count;
+                },
+                checkChange: function (i) {
+                    this.list[i].check = !this.list[i].check;
+                },
+                editChange: function (i) {
+                    this.list[i].edit = !this.list[i].edit;
+                },
+                finish: function () {
+                    var temp=this.list;
+                    this.list=[];
+                    for (var i = 0; i < temp.length; i++) {
+                        if (!temp[i].check) {
+                            this.list.push(temp[i]);
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
